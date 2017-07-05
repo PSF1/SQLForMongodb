@@ -1,0 +1,2 @@
+[05-Jul-2017 21:32:21 UTC] PHP Warning:  require_once(D:\Documentos\000 Pharinix CMS\Proyectos\SQLToMongo\tests/../sqlformongo.php): failed to open stream: No such file or directory in D:\Documentos\000 Pharinix CMS\Proyectos\SQLToMongo\tests\sqlformongoTest.php on line 6
+[05-Jul-2017 21:32:21 UTC] PHP Fatal error:  require_once(): Failed opening required 'D:\Documentos\000 Pharinix CMS\Proyectos\SQLToMongo\tests/../sqlformongo.php' (include_path='.;C:\php\pear') in D:\Documentos\000 Pharinix CMS\Proyectos\SQLToMongo\tests\sqlformongoTest.php on line 6

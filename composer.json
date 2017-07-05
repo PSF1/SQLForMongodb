@@ -1,0 +1,15 @@
+{
+    "name": "psf1/sqlformongo",
+    "description": "Translate SQL queries to MongoDB",
+    "type": "library",
+    "require": {
+        "greenlion/php-sql-parser": "^4.1"
+    },
+    "license": "BSD License (3 Clause)",
+    "authors": [
+        {
+            "name": "Pedro Pelaez",
+            "email": "aaaaa976@gmail.com"
+        }
+    ]
+}

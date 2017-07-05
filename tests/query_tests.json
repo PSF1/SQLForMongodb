@@ -1,0 +1,22 @@
+[
+    {
+        "sql":"SELECT * FROM people WHERE true || status = \"A\" && ff = 2",
+        "mongodb":"db.people.find({status:\"A\"})"
+    },
+    {
+        "sql":"SELECT * FROM people",
+        "mongodb":"db.people.find()"
+    },
+    {
+        "sql":"SELECT id, * FROM people",
+        "mongodb":"db.people.find({},{id:1})"
+    },
+    {
+        "sql":"SELECT `id`, user_id, status FROM people",
+        "mongodb":"db.people.find({},{id:1,user_id:1,status:1})"
+    },
+    {
+        "sql":"SELECT id, user_id, status FROM people",
+        "mongodb":"db.people.find({},{id:1,user_id:1,status:1})"
+    }
+]
