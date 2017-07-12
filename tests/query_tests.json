@@ -1,7 +1,7 @@
 [
     {
-        "sql":"SELECT * FROM people WHERE true || status = \"A\" && ff = 2",
-        "mongodb":"db.people.find({status:\"A\"})"
+        "sql":"SELECT * FROM people WHERE status = 'A' && (ff = 2 || true)",
+        "mongodb":"db.people.find({status:'A'})"
     },
     {
         "sql":"SELECT * FROM people",
