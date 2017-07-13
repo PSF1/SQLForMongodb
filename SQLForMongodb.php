@@ -72,7 +72,7 @@ class SQLForMongodb {
      * ||, OR
      * :=
      * ------------------------------------------------------------------
-     * 
+     *
      * The || operator has a precedence between ^ and the unary operators if the PIPES_AS_CONCAT SQL mode is enabled.
      *
      * The precedence shown for NOT is as of MySQL 5.0.2. For earlier versions, or from 5.0.2 on if the
@@ -83,6 +83,8 @@ class SQLForMongodb {
      * -> 7
      * mysql> SELECT (1+2)*3;
      * -> 9
+     * 
+     * MongoDB online shell to test results: https://docs.mongodb.com/manual/tutorial/insert-documents/
      */
     protected static $Simb = array( //[4][3]
         array('INTERVAL', '', '', '', '', '', '', '', '', '', '', ''),
@@ -102,7 +104,7 @@ class SQLForMongodb {
         array('XOR', '', '', '', '', '', '', '', '', '', '', ''),
         array('||', 'OR', '', '', '', '', '', '', '', '', '', ''),
         array(':=', '', '', '', '', '', '', '', '', '', '', ''),
-        
+
 //        array('(', ')', ''),
 //        array('-', '+', ''),
 //        array('/', '*', ''),
@@ -110,6 +112,218 @@ class SQLForMongodb {
     );
     protected static $SimbX = 17;
     protected static $SimbY = 12;
+    protected static $SimbParams = array(
+//        'INTERVAL' => array(
+//            'nperands' => 0,
+//            'implemented' => false,
+//            'translate' => '',
+//        ),
+//        'BINARY' => array(
+//            'nperands' => 0,
+//            'implemented' => false,
+//            'translate' => '',
+//        ),
+//        'COLLATE' => array( // https://dev.mysql.com/doc/refman/5.7/en/charset-collate.html
+//            'nperands' => 2,
+//            'implemented' => false,
+//            'translate' => '',
+//        ),
+        '!' => array( // https://dev.mysql.com/doc/refman/5.7/en/logical-operators.html#operator_not
+            'nperands' => 1,
+            'implemented' => true,
+            'translate' => '{$not:{<param1>}}', // https://docs.mongodb.com/manual/reference/operator/query/not/
+        ),
+        '-' /*(unary minus)*/ => array( // https://dev.mysql.com/doc/refman/5.7/en/arithmetic-functions.html
+            'nperands' => 1,
+            'implemented' => true,
+            'translate' => '{$multiply:[-1,<param1>]}', // $multiply: [ -1, "$quantity" ] https://docs.mongodb.com/manual/reference/operator/aggregation/multiply/
+        ),
+//        '~' /*(unary bit inversion)*/ => array( // https://dev.mysql.com/doc/refman/5.7/en/bit-functions.html
+//            'nperands' => 1,
+//            'implemented' => false,
+//            'translate' => '',
+//        ),
+        '^' => array( // https://dev.mysql.com/doc/refman/5.7/en/bit-functions.html#operator_bitwise-xor
+            'nperands' => 2,
+            'implemented' => true,
+            'translate' => '{$bit:{<param1>:{xor:<param2>}}}', // { $bit: { <field>: { <and|or|xor>: <int> } } } https://docs.mongodb.com/manual/reference/operator/update/bit/
+        ),
+        '*' => array( // https://dev.mysql.com/doc/refman/5.7/en/arithmetic-functions.html#operator_times
+            'nperands' => 2,
+            'implemented' => true,
+            'translate' => '{$mul:{<param1>:<param2>}}', // { $mul: { field: <number> } } https://docs.mongodb.com/manual/reference/operator/update/mul/
+        ),
+        '/' => array( // https://dev.mysql.com/doc/refman/5.7/en/arithmetic-functions.html#operator_divide
+            'nperands' => 2,
+            'implemented' => true,
+            'translate' => '{$divide:[<param2>,<param2>]}', // { $divide: [ <expression1>, <expression2> ] } https://docs.mongodb.com/manual/reference/operator/aggregation/divide/#exp._S_divide
+        ),
+        'DIV' => array( // https://dev.mysql.com/doc/refman/5.7/en/arithmetic-functions.html#operator_div
+            'nperands' => 2,
+            'implemented' => true,
+            'translate' => '{NumberInt({$divide:[<param1>,<param2>]})}',  // NumberInt({ $divide: [ <expression1>, <expression2> ] }) https://docs.mongodb.com/manual/reference/operator/aggregation/divide/#exp._S_divide
+        ),
+        '%' => array( // https://dev.mysql.com/doc/refman/5.7/en/arithmetic-functions.html#operator_mod
+            'nperands' => 2,
+            'implemented' => true,
+            'translate' => '{$mod:[<param1>,<param2>]}', // $mod: [ divisor, remainder ] https://docs.mongodb.com/manual/reference/operator/query/mod/
+        ),
+        'MOD' => array( // https://dev.mysql.com/doc/refman/5.7/en/arithmetic-functions.html#operator_mod
+            'nperands' => 2,
+            'implemented' => true,
+            'translate' => '{$mod:[<param1>,<param2>]}', // $mod: [ divisor, remainder ] https://docs.mongodb.com/manual/reference/operator/query/mod/
+        ),
+        '-' => array( // https://dev.mysql.com/doc/refman/5.7/en/arithmetic-functions.html#operator_minus
+            'nperands' => 2,
+            'implemented' => true,
+            'translate' => '{$subtract:[<param1>,<param2>]}', // { $subtract: [ <expression1>, <expression2> ] } https://docs.mongodb.com/v3.2/reference/operator/aggregation/subtract/
+        ),
+        '+' => array( // https://dev.mysql.com/doc/refman/5.7/en/arithmetic-functions.html#operator_plus
+            'nperands' => 2,
+            'implemented' => true,
+            'translate' => '{$add:[<param1>,<param2>]}', // { $add: [ <expression1>, <expression2>, ... ] } https://docs.mongodb.com/v3.2/reference/operator/aggregation/add/#exp._S_add
+        ),
+//        '<<' => array( // https://dev.mysql.com/doc/refman/5.7/en/bit-functions.html#operator_left-shift
+//            'nperands' => 2,
+//            'implemented' => false,
+//            'translate' => '', //
+//        ),
+//        '>>' => array(
+//            'nperands' => 0,
+//            'implemented' => false,
+//            'translate' => '',
+//        ),
+//        '&' => array(
+//            'nperands' => 0,
+//            'implemented' => false,
+//            'translate' => '',
+//        ),
+//        '|' => array(
+//            'nperands' => 0,
+//            'implemented' => false,
+//            'translate' => '',
+//        ),
+        '=' => array( // https://dev.mysql.com/doc/refman/5.7/en/comparison-operators.html#operator_equal
+            'nperands' => 2,
+            'implemented' => true,
+            'translate' => '{<param1>:<param2>}', // '{<param1>:{$eq:<param2>}}', // https://docs.mongodb.com/manual/reference/operator/query/eq/
+        ),
+        '<=>' => array( // https://dev.mysql.com/doc/refman/5.7/en/comparison-operators.html#operator_equal-to
+            'nperands' => 2,
+            'implemented' => true,
+            'translate' => '{<param1>:<param2>}', // '{<param1>:{$eq:<param2>}}', // https://docs.mongodb.com/manual/reference/operator/query/eq/
+        ),
+        '>=' => array( // https://dev.mysql.com/doc/refman/5.7/en/comparison-operators.html#operator_greater-than-or-equal
+            'nperands' => 2,
+            'implemented' => true,
+            'translate' => '{<param1>:{$gte:<param2>}', // https://docs.mongodb.com/manual/reference/operator/query/gte/
+        ),
+        '>' => array( // https://dev.mysql.com/doc/refman/5.7/en/comparison-operators.html#operator_greater-than
+            'nperands' => 2,
+            'implemented' => true,
+            'translate' => '{<param1>:{$gt:<param2>}}', // https://docs.mongodb.com/manual/reference/operator/query/gt/
+        ),
+        '<=' => array( // https://dev.mysql.com/doc/refman/5.7/en/comparison-operators.html#operator_less-than-or-equal
+            'nperands' => 2,
+            'implemented' => true,
+            'translate' => '{<param1>:{$lte:<param2>}}', // https://docs.mongodb.com/manual/reference/operator/query/lte/
+        ),
+        '<' => array( // https://dev.mysql.com/doc/refman/5.7/en/comparison-operators.html#operator_less-than
+            'nperands' => 2,
+            'implemented' => true,
+            'translate' => '{<param1>:{$lt:<param2>}}', // https://docs.mongodb.com/manual/reference/operator/query/lt/
+        ),
+        '<>' => array( // https://dev.mysql.com/doc/refman/5.7/en/comparison-operators.html#operator_not-equal
+            'nperands' => 2,
+            'implemented' => true,
+            'translate' => '{<param1>:{$ne:<param2>}}', // https://docs.mongodb.com/manual/reference/operator/query/ne/
+        ),
+        '!=' => array( // https://dev.mysql.com/doc/refman/5.7/en/comparison-operators.html#operator_not-equal
+            'nperands' => 2,
+            'implemented' => true,
+            'translate' => '{<param1>:{$ne:<param2>}}', // https://docs.mongodb.com/manual/reference/operator/query/ne/
+        ),
+//        'IS' => array( // {<param1>:{$ne:<param2>}}', // https://docs.mongodb.com/manual/reference/operator/query/ne/
+//            'nperands' => 0,
+//            'implemented' => false,
+//            'translate' => '',
+//        ),
+        'LIKE' => array( // Require convert param2 to REGEX (self::parseLikePattern()) https://dev.mysql.com/doc/refman/5.7/en/string-comparison-functions.html#operator_like
+            'nperands' => 2,
+            'implemented' => true,
+            'translate' => '{<param1>:{$regex:<param2>}}', // https://chartio.com/resources/tutorials/how-to-use-a-sql-like-statement-in-mongodb/
+        ),
+        'REGEXP' => array( // https://dev.mysql.com/doc/refman/5.7/en/regexp.html#operator_regexp
+            'nperands' => 2,
+            'implemented' => true,
+            'translate' => '{<param1>:{$regex:<param2>}}', // https://docs.mongodb.com/manual/reference/operator/query/regex/
+        ),
+        'IN' => array( // Require remove '(' & ')' from param2 https://dev.mysql.com/doc/refman/5.7/en/comparison-operators.html#function_in
+            'nperands' => 2,
+            'implemented' => true,
+            'translate' => '{<param1>:{$in:[<param2>]}}', // https://docs.mongodb.com/manual/reference/operator/query/in/
+        ),
+//        'BETWEEN' => array( // https://dev.mysql.com/doc/refman/5.7/en/comparison-operators.html#operator_between
+//            'nperands' => 0,
+//            'implemented' => false,
+//            'translate' => '',
+//        ),
+//        'CASE' => array( // https://dev.mysql.com/doc/refman/5.7/en/control-flow-functions.html#operator_case
+//            'nperands' => 0,
+//            'implemented' => false,
+//            'translate' => '',
+//        ),
+//        'WHEN' => array( // https://dev.mysql.com/doc/refman/5.7/en/control-flow-functions.html#operator_case
+//            'nperands' => 0,
+//            'implemented' => false,
+//            'translate' => '',
+//        ),
+//        'THEN' => array( // https://dev.mysql.com/doc/refman/5.7/en/control-flow-functions.html#operator_case
+//            'nperands' => 0,
+//            'implemented' => false,
+//            'translate' => '',
+//        ),
+//        'ELSE' => array( // https://dev.mysql.com/doc/refman/5.7/en/control-flow-functions.html#operator_case
+//            'nperands' => 0,
+//            'implemented' => false,
+//            'translate' => '',
+//        ),
+        'NOT' => array( // https://dev.mysql.com/doc/refman/5.7/en/logical-operators.html#operator_not
+            'nperands' => 1,
+            'implemented' => true,
+            'translate' => '{$not:{<param1>}}', // https://docs.mongodb.com/manual/reference/operator/query/not/
+        ),
+        '&&' => array( // https://dev.mysql.com/doc/refman/5.7/en/logical-operators.html#operator_and
+            'nperands' => 2,
+            'implemented' => true,
+            'translate' => '{$and:[{<param1>},{<param2>}]}', // https://docs.mongodb.com/manual/reference/operator/query/and/
+        ),
+        'AND' => array( // https://dev.mysql.com/doc/refman/5.7/en/logical-operators.html#operator_and
+            'nperands' => 2,
+            'implemented' => true,
+            'translate' => '{$and:[{<param1>},{<param2>}]}', // https://docs.mongodb.com/manual/reference/operator/query/and/
+        ),
+//        'XOR' => array( // https://dev.mysql.com/doc/refman/5.7/en/logical-operators.html#operator_xor
+//            'nperands' => 0,
+//            'implemented' => false,
+//            'translate' => '',
+//        ),
+        '||' => array( // https://dev.mysql.com/doc/refman/5.7/en/logical-operators.html#operator_or
+            'nperands' => 2,
+            'implemented' => true,
+            'translate' => '{$or:[{<param1>},{<param2>}}]}', // https://docs.mongodb.com/manual/reference/operator/query/or/
+        ),
+        'OR' => array( // https://dev.mysql.com/doc/refman/5.7/en/logical-operators.html#operator_or
+            'nperands' => 2,
+            'implemented' => true,
+            'translate' => '{$or:[{<param1>},{<param2>}}]}', // https://docs.mongodb.com/manual/reference/operator/query/or/
+        ),
+//        ':=' => array(
+//            'nperands' => 0,
+//            'implemented' => false,
+//            'translate' => '',
+//        ),
+    );
 
     function __construct() {
 
@@ -160,17 +374,12 @@ class SQLForMongodb {
 
         // Where
         $sWhere = '';
-        var_dump($sql);
-//        var_dump($skeleton['WHERE']);
-//        $where = self::printWhere($skeleton['WHERE'], $sql);
+//        var_dump($sql);
         $node = self::buildWhereTree($skeleton['WHERE']);
-        var_dump(self::printWhere($skeleton['WHERE'], $sql));
-        var_dump(self::printWhere($node, $sql));
-//        var_dump($node);
-//        var_dump($where);
-        echo "\n\n";
-
         $sWhere = '{}';
+        if (count($node) > 0) {
+            $sWhere = self::parseWhere($node);
+        }
         $params[] = $sWhere;
 
         // Fields
@@ -213,15 +422,80 @@ class SQLForMongodb {
     }
 
     /**
-     * Becomes an expression EI (infix) to a EPRE expression (prefix)
+     * Convert a prefix array of where conditions into MongoDB condition structure
      * 
+     * @param array $epre Infix array
+     * @return string MongoDB condition structure
+     */
+    public static function parseWhere($epre) {
+        $sql = '';
+        $resp = '';
+        if(count($epre) > 0) {
+            // Get operator
+            $op = array_pop($epre);
+//            var_dump("OP GET ".$op["expr_type"].'\' {'.$op["base_expr"].'}');
+            if($op["expr_type"] != 'operator') {
+                throw new \Exception('Spected operator but find \''.$op["expr_type"].'\' {'.$op["base_expr"].'}');
+            }
+            if (!self::$SimbParams[$op["base_expr"]]['implemented']) {
+                throw new \Exception('Operator not implemented {'.$op["base_expr"].'}');
+            }
+            $nparams = self::$SimbParams[$op["base_expr"]]['nperands'];
+            $translate = self::$SimbParams[$op["base_expr"]]['translate'];
+            $param1 = '';
+            $param2 = '';
+            // Get param1
+            if(count($epre) <= 0) {
+                throw new \Exception('Operation incomplete {'.self::printWhere($epre, $sql).'}');
+            }
+            $p1 = array_pop($epre);
+//            var_dump("P1 GET ".$p1["expr_type"].'\' {'.$p1["base_expr"].'}');
+            if($p1["expr_type"] == 'operator') {
+//                var_dump("P1 PUT ".$p1["expr_type"].'\' {'.$p1["base_expr"].'}');
+                $epre[] = $p1;
+//                var_dump(self::printWhere($epre, $sql));
+                $param1 = self::parseWhere($epre);
+            } else {
+                $param1 = $p1['base_expr'];
+            }
+            if ($nparams >= 2) {
+                // Get param 2
+                if(count($epre) <= 0) {
+                    throw new \Exception('Operation incomplete {'.self::printWhere($epre, $sql).'}');
+                }
+                $p2 = array_pop($epre);
+//                var_dump("P2 GET ".$p2["expr_type"].'\' {'.$p2["base_expr"].'}');
+                $param2 = '';
+                if($p2["expr_type"] == 'operator') {
+//                    var_dump("P2 PUT ".$p2["expr_type"].'\' {'.$p2["base_expr"].'}');
+                    $epre[] = $p2;
+                    $param2 = self::parseWhere($epre);
+                } else {
+                    $param2 = $p2['base_expr'];
+                }
+            }
+            // Do replacements
+            if (!empty($param1)) {
+                $translate = str_replace('<param1>', $param1, $translate);
+            }
+            if (!empty($param2)) {
+                $translate = str_replace('<param2>', $param2, $translate);
+            }
+            $resp = $translate;
+        }
+        return $resp;
+    }
+    
+    /**
+     * Becomes an expression EI (infix) to a EPRE expression (prefix)
+     *
      * @param array $stack Infix list of tockens
      * @param integer $level
      * @return array Prefix list of tockens
      */
     public static function buildWhereTree($stack, $level = 0) {
         /* http://www.lawebdelprogramador.com/foros/Algoritmia/181793-convertir-notacion-Infija-a-postfija.html
-         * 
+         *
          * Convierte una expresion EI (Infija) a una espresi¢n EPRE (Prefija)
          */
         //void Conv_Pre(char EI[], char EPRE[]) {
@@ -302,7 +576,7 @@ class SQLForMongodb {
     /**
      * Remove the last item in Text.
      * Elimina el ultimo elemento de Text
-     * 
+     *
      * IMPORTANT: Really don't remove the item, only change it to a empty string.
      * @param array $Text Items array
      */
@@ -315,7 +589,7 @@ class SQLForMongodb {
     /**
      * Verify if Expr is a simbol or not
      * Verifica si Expr es simbolo o no
-     * 
+     *
      * @param array $Expr Simbol array
      * @return boolean TRUE if $Expr represent a operator.
      */
@@ -335,7 +609,7 @@ class SQLForMongodb {
     /**
      * Get priority betwenn exp1 and exp2
      * Calcula la prioridad entre exp1 y exp2
-     * 
+     *
      * -1 si exp1 < exp2
      * 0 si exp1 == exp2
      * 1 si exp1 > exp2
@@ -367,6 +641,54 @@ class SQLForMongodb {
             $i = 1;
         }
         return ($i);
+    }
+
+    /**
+     * Convert LIKE pattern to REGEX pattern
+     * (% and _ wildcards and a generic $escape escape character)
+     * 
+     * @author kermit <https://stackoverflow.com/users/679449/kermit>
+     * @link https://stackoverflow.com/a/11436643
+     * @param string $pattern LIKE pattern
+     * @param string $escape SCAPE pattern
+     * @return type
+     */
+    public static function parseLikePattern($pattern, $escape = '\\') {
+        // Split the pattern into special sequences and the rest
+        $expr = '/((?:' . preg_quote($escape, '/') . ')?(?:' . preg_quote($escape, '/') . '|%|_))/';
+        $parts = preg_split($expr, $pattern, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+
+        // Loop the split parts and convert/escape as necessary to build regex
+        $expr = '/^';
+        $lastWasPercent = FALSE;
+        foreach ($parts as $part) {
+            switch ($part) {
+                case $escape . $escape:
+                    $expr .= preg_quote($escape, '/');
+                    break;
+                case $escape . '%':
+                    $expr .= '%';
+                    break;
+                case $escape . '_':
+                    $expr .= '_';
+                    break;
+                case '%':
+                    if (!$lastWasPercent) {
+                        $expr .= '.*?';
+                    }
+                    break;
+                case '_':
+                    $expr .= '.';
+                    break;
+                default:
+                    $expr .= preg_quote($part, '/');
+                    break;
+            }
+            $lastWasPercent = $part == '%';
+        }
+        $expr .= '$/i';
+
+        return $expr;
     }
 
 }
