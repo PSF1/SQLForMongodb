@@ -427,7 +427,7 @@ class SQLForMongodb {
      * @param array $epre Infix array
      * @return string MongoDB condition structure
      */
-    public static function parseWhere($epre) {
+    public static function parseWhere(&$epre) {
         $sql = '';
         $resp = '';
         if(count($epre) > 0) {
@@ -483,6 +483,7 @@ class SQLForMongodb {
             }
             $resp = $translate;
         }
+//        var_dump(self::printWhere($epre, $sql));
         return $resp;
     }
     
@@ -515,7 +516,7 @@ class SQLForMongodb {
             // Get the top item in stack (PEEK). Tomamos el simbolo mas a la derecha
             $Simbolo = $EI[$n];
             // We remove tha last item in stack (POP). Recortamos la expresi¢n
-            self::Rec_Exp_Pre($EI);
+            self::buildWhereTreeRecExpPre($EI);
             // If the simbol is right parenthesis. Si el s¡mbolo es parentesis derecho
 //            if ($Simbolo == ')') {
 //                $TOPE += 1;
@@ -541,14 +542,14 @@ class SQLForMongodb {
                 }
             } else
             // If operand. Si es operando
-            if (self::IfSimb($Simbolo) == False) {
+            if (self::buildWhereTreeIfSimb($Simbolo) == False) {
 //                self::Append($EPRE, $Simbolo);
                 $EPRE[] = $Simbolo;
             } else {
                 // If the stack has something. Si la pila contiene algo
                 if (count($PILA) > 0) {
                     // While the operator has less priority that the item in top of stack. Mientras el operador sea < al que se encuentra al tope de la pila
-                    while (self::Priority($Simbolo["base_expr"], $PILA[$TOPE]["base_expr"]) < 0) {
+                    while (self::buildWhereTreePriority($Simbolo["base_expr"], $PILA[$TOPE]["base_expr"]) < 0) {
                         // We add the top item in stack to results. Agregar lo que hay en el tope de la pila
 //                        self::Append($EPRE, $PILA[$TOPE]);
                         $EPRE[] = $PILA[$TOPE];
@@ -580,7 +581,7 @@ class SQLForMongodb {
      * IMPORTANT: Really don't remove the item, only change it to a empty string.
      * @param array $Text Items array
      */
-    private function Rec_Exp_Pre($Text = null) {
+    private function buildWhereTreeRecExpPre($Text = null) {
         if ($Text == null) $Text = array();
         $n = count($Text);
         $Text[$n - 1] = '';
@@ -593,7 +594,7 @@ class SQLForMongodb {
      * @param array $Expr Simbol array
      * @return boolean TRUE if $Expr represent a operator.
      */
-    private function IfSimb($Expr) {
+    private function buildWhereTreeIfSimb($Expr) {
 //        $val = False;
         for ($i = 0; $i < self::$SimbX; ++$i) {
             for ($j = 0; $j < self::$SimbY; ++$j) {
@@ -617,7 +618,7 @@ class SQLForMongodb {
      * @param string $exp2 Operator 2
      * @return integer -1 if exp1 &lt; exp2, 0 if exp1 == exp2, 1 if exp1 > exp2
      */
-    private function Priority($exp1, $exp2) {
+    private function buildWhereTreePriority($exp1, $exp2) {
         //int i, j, p1, p2;
         $p1 = -1;
         $p2 = -1;
@@ -634,11 +635,11 @@ class SQLForMongodb {
             if ($p1 != -1 && $p2 != -1) break;
         }
         if ($p1 < $p2) {
-            $i = -1;
+            $i = 1;
         } else if ($p1 == $p2) {
             $i = 0;
         } else if ($p1 > $p2) {
-            $i = 1;
+            $i = -1;
         }
         return ($i);
     }
