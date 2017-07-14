@@ -455,6 +455,8 @@ class SQLForMongodb {
                 $epre[] = $p1;
 //                var_dump(self::printWhere($epre, $sql));
                 $param1 = self::parseWhere($epre);
+            } elseif($p1["expr_type"] == 'colref') {
+                $param1 = '"'.$p1['base_expr'].'"';
             } else {
                 $param1 = $p1['base_expr'];
             }
@@ -470,6 +472,8 @@ class SQLForMongodb {
 //                    var_dump("P2 PUT ".$p2["expr_type"].'\' {'.$p2["base_expr"].'}');
                     $epre[] = $p2;
                     $param2 = self::parseWhere($epre);
+                } elseif($p2["expr_type"] == 'colref') {
+                    $param1 = '"'.$p2['base_expr'].'"';
                 } else {
                     $param2 = $p2['base_expr'];
                 }
