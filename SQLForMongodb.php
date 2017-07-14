@@ -131,12 +131,12 @@ class SQLForMongodb {
         '!' => array( // https://dev.mysql.com/doc/refman/5.7/en/logical-operators.html#operator_not
             'nperands' => 1,
             'implemented' => true,
-            'translate' => '{$not:{<param1>}}', // https://docs.mongodb.com/manual/reference/operator/query/not/
+            'translate' => '$not:{<param1>}', // https://docs.mongodb.com/manual/reference/operator/query/not/
         ),
         '-' /*(unary minus)*/ => array( // https://dev.mysql.com/doc/refman/5.7/en/arithmetic-functions.html
             'nperands' => 1,
             'implemented' => true,
-            'translate' => '{$multiply:[-1,<param1>]}', // $multiply: [ -1, "$quantity" ] https://docs.mongodb.com/manual/reference/operator/aggregation/multiply/
+            'translate' => '$multiply:[-1,<param1>]', // $multiply: [ -1, "$quantity" ] https://docs.mongodb.com/manual/reference/operator/aggregation/multiply/
         ),
 //        '~' /*(unary bit inversion)*/ => array( // https://dev.mysql.com/doc/refman/5.7/en/bit-functions.html
 //            'nperands' => 1,
@@ -146,42 +146,42 @@ class SQLForMongodb {
         '^' => array( // https://dev.mysql.com/doc/refman/5.7/en/bit-functions.html#operator_bitwise-xor
             'nperands' => 2,
             'implemented' => true,
-            'translate' => '{$bit:{<param1>:{xor:<param2>}}}', // { $bit: { <field>: { <and|or|xor>: <int> } } } https://docs.mongodb.com/manual/reference/operator/update/bit/
+            'translate' => '$bit:{<param1>:{xor:<param2>}}', // { $bit: { <field>: { <and|or|xor>: <int> } } } https://docs.mongodb.com/manual/reference/operator/update/bit/
         ),
         '*' => array( // https://dev.mysql.com/doc/refman/5.7/en/arithmetic-functions.html#operator_times
             'nperands' => 2,
             'implemented' => true,
-            'translate' => '{$mul:{<param1>:<param2>}}', // { $mul: { field: <number> } } https://docs.mongodb.com/manual/reference/operator/update/mul/
+            'translate' => '$mul:{<param1>:<param2>}', // { $mul: { field: <number> } } https://docs.mongodb.com/manual/reference/operator/update/mul/
         ),
         '/' => array( // https://dev.mysql.com/doc/refman/5.7/en/arithmetic-functions.html#operator_divide
             'nperands' => 2,
             'implemented' => true,
-            'translate' => '{$divide:[<param2>,<param2>]}', // { $divide: [ <expression1>, <expression2> ] } https://docs.mongodb.com/manual/reference/operator/aggregation/divide/#exp._S_divide
+            'translate' => '$divide:[<param2>,<param2>]', // { $divide: [ <expression1>, <expression2> ] } https://docs.mongodb.com/manual/reference/operator/aggregation/divide/#exp._S_divide
         ),
         'DIV' => array( // https://dev.mysql.com/doc/refman/5.7/en/arithmetic-functions.html#operator_div
             'nperands' => 2,
             'implemented' => true,
-            'translate' => '{NumberInt({$divide:[<param1>,<param2>]})}',  // NumberInt({ $divide: [ <expression1>, <expression2> ] }) https://docs.mongodb.com/manual/reference/operator/aggregation/divide/#exp._S_divide
+            'translate' => 'NumberInt({$divide:[<param1>,<param2>]})',  // NumberInt({ $divide: [ <expression1>, <expression2> ] }) https://docs.mongodb.com/manual/reference/operator/aggregation/divide/#exp._S_divide
         ),
         '%' => array( // https://dev.mysql.com/doc/refman/5.7/en/arithmetic-functions.html#operator_mod
             'nperands' => 2,
             'implemented' => true,
-            'translate' => '{$mod:[<param1>,<param2>]}', // $mod: [ divisor, remainder ] https://docs.mongodb.com/manual/reference/operator/query/mod/
+            'translate' => '$mod:[<param1>,<param2>]', // $mod: [ divisor, remainder ] https://docs.mongodb.com/manual/reference/operator/query/mod/
         ),
         'MOD' => array( // https://dev.mysql.com/doc/refman/5.7/en/arithmetic-functions.html#operator_mod
             'nperands' => 2,
             'implemented' => true,
-            'translate' => '{$mod:[<param1>,<param2>]}', // $mod: [ divisor, remainder ] https://docs.mongodb.com/manual/reference/operator/query/mod/
+            'translate' => '$mod:[<param1>,<param2>]', // $mod: [ divisor, remainder ] https://docs.mongodb.com/manual/reference/operator/query/mod/
         ),
         '-' => array( // https://dev.mysql.com/doc/refman/5.7/en/arithmetic-functions.html#operator_minus
             'nperands' => 2,
             'implemented' => true,
-            'translate' => '{$subtract:[<param1>,<param2>]}', // { $subtract: [ <expression1>, <expression2> ] } https://docs.mongodb.com/v3.2/reference/operator/aggregation/subtract/
+            'translate' => '$subtract:[<param1>,<param2>]', // { $subtract: [ <expression1>, <expression2> ] } https://docs.mongodb.com/v3.2/reference/operator/aggregation/subtract/
         ),
         '+' => array( // https://dev.mysql.com/doc/refman/5.7/en/arithmetic-functions.html#operator_plus
             'nperands' => 2,
             'implemented' => true,
-            'translate' => '{$add:[<param1>,<param2>]}', // { $add: [ <expression1>, <expression2>, ... ] } https://docs.mongodb.com/v3.2/reference/operator/aggregation/add/#exp._S_add
+            'translate' => '$add:[<param1>,<param2>]', // { $add: [ <expression1>, <expression2>, ... ] } https://docs.mongodb.com/v3.2/reference/operator/aggregation/add/#exp._S_add
         ),
 //        '<<' => array( // https://dev.mysql.com/doc/refman/5.7/en/bit-functions.html#operator_left-shift
 //            'nperands' => 2,
@@ -206,42 +206,42 @@ class SQLForMongodb {
         '=' => array( // https://dev.mysql.com/doc/refman/5.7/en/comparison-operators.html#operator_equal
             'nperands' => 2,
             'implemented' => true,
-            'translate' => '{<param1>:<param2>}', // '{<param1>:{$eq:<param2>}}', // https://docs.mongodb.com/manual/reference/operator/query/eq/
+            'translate' => '<param1>:<param2>', // '{<param1>:{$eq:<param2>}}', // https://docs.mongodb.com/manual/reference/operator/query/eq/
         ),
         '<=>' => array( // https://dev.mysql.com/doc/refman/5.7/en/comparison-operators.html#operator_equal-to
             'nperands' => 2,
             'implemented' => true,
-            'translate' => '{<param1>:<param2>}', // '{<param1>:{$eq:<param2>}}', // https://docs.mongodb.com/manual/reference/operator/query/eq/
+            'translate' => '<param1>:<param2>', // '{<param1>:{$eq:<param2>}}', // https://docs.mongodb.com/manual/reference/operator/query/eq/
         ),
         '>=' => array( // https://dev.mysql.com/doc/refman/5.7/en/comparison-operators.html#operator_greater-than-or-equal
             'nperands' => 2,
             'implemented' => true,
-            'translate' => '{<param1>:{$gte:<param2>}', // https://docs.mongodb.com/manual/reference/operator/query/gte/
+            'translate' => '<param1>:{$gte:<param2>}', // https://docs.mongodb.com/manual/reference/operator/query/gte/
         ),
         '>' => array( // https://dev.mysql.com/doc/refman/5.7/en/comparison-operators.html#operator_greater-than
             'nperands' => 2,
             'implemented' => true,
-            'translate' => '{<param1>:{$gt:<param2>}}', // https://docs.mongodb.com/manual/reference/operator/query/gt/
+            'translate' => '<param1>:{$gt:<param2>}', // https://docs.mongodb.com/manual/reference/operator/query/gt/
         ),
         '<=' => array( // https://dev.mysql.com/doc/refman/5.7/en/comparison-operators.html#operator_less-than-or-equal
             'nperands' => 2,
             'implemented' => true,
-            'translate' => '{<param1>:{$lte:<param2>}}', // https://docs.mongodb.com/manual/reference/operator/query/lte/
+            'translate' => '<param1>:{$lte:<param2>}', // https://docs.mongodb.com/manual/reference/operator/query/lte/
         ),
         '<' => array( // https://dev.mysql.com/doc/refman/5.7/en/comparison-operators.html#operator_less-than
             'nperands' => 2,
             'implemented' => true,
-            'translate' => '{<param1>:{$lt:<param2>}}', // https://docs.mongodb.com/manual/reference/operator/query/lt/
+            'translate' => '<param1>:{$lt:<param2>}', // https://docs.mongodb.com/manual/reference/operator/query/lt/
         ),
         '<>' => array( // https://dev.mysql.com/doc/refman/5.7/en/comparison-operators.html#operator_not-equal
             'nperands' => 2,
             'implemented' => true,
-            'translate' => '{<param1>:{$ne:<param2>}}', // https://docs.mongodb.com/manual/reference/operator/query/ne/
+            'translate' => '<param1>:{$ne:<param2>}', // https://docs.mongodb.com/manual/reference/operator/query/ne/
         ),
         '!=' => array( // https://dev.mysql.com/doc/refman/5.7/en/comparison-operators.html#operator_not-equal
             'nperands' => 2,
             'implemented' => true,
-            'translate' => '{<param1>:{$ne:<param2>}}', // https://docs.mongodb.com/manual/reference/operator/query/ne/
+            'translate' => '<param1>:{$ne:<param2>}', // https://docs.mongodb.com/manual/reference/operator/query/ne/
         ),
 //        'IS' => array( // {<param1>:{$ne:<param2>}}', // https://docs.mongodb.com/manual/reference/operator/query/ne/
 //            'nperands' => 0,
@@ -251,17 +251,17 @@ class SQLForMongodb {
         'LIKE' => array( // Require convert param2 to REGEX (self::parseLikePattern()) https://dev.mysql.com/doc/refman/5.7/en/string-comparison-functions.html#operator_like
             'nperands' => 2,
             'implemented' => true,
-            'translate' => '{<param1>:{$regex:<param2>}}', // https://chartio.com/resources/tutorials/how-to-use-a-sql-like-statement-in-mongodb/
+            'translate' => '<param1>:{$regex:<param2>}', // https://chartio.com/resources/tutorials/how-to-use-a-sql-like-statement-in-mongodb/
         ),
         'REGEXP' => array( // https://dev.mysql.com/doc/refman/5.7/en/regexp.html#operator_regexp
             'nperands' => 2,
             'implemented' => true,
-            'translate' => '{<param1>:{$regex:<param2>}}', // https://docs.mongodb.com/manual/reference/operator/query/regex/
+            'translate' => '<param1>:{$regex:<param2>}', // https://docs.mongodb.com/manual/reference/operator/query/regex/
         ),
         'IN' => array( // Require remove '(' & ')' from param2 https://dev.mysql.com/doc/refman/5.7/en/comparison-operators.html#function_in
             'nperands' => 2,
             'implemented' => true,
-            'translate' => '{<param1>:{$in:[<param2>]}}', // https://docs.mongodb.com/manual/reference/operator/query/in/
+            'translate' => '<param1>:{$in:[<param2>]}', // https://docs.mongodb.com/manual/reference/operator/query/in/
         ),
 //        'BETWEEN' => array( // https://dev.mysql.com/doc/refman/5.7/en/comparison-operators.html#operator_between
 //            'nperands' => 0,
@@ -291,17 +291,17 @@ class SQLForMongodb {
         'NOT' => array( // https://dev.mysql.com/doc/refman/5.7/en/logical-operators.html#operator_not
             'nperands' => 1,
             'implemented' => true,
-            'translate' => '{$not:{<param1>}}', // https://docs.mongodb.com/manual/reference/operator/query/not/
+            'translate' => '$not:{<param1>}', // https://docs.mongodb.com/manual/reference/operator/query/not/
         ),
         '&&' => array( // https://dev.mysql.com/doc/refman/5.7/en/logical-operators.html#operator_and
             'nperands' => 2,
             'implemented' => true,
-            'translate' => '{$and:[{<param1>},{<param2>}]}', // https://docs.mongodb.com/manual/reference/operator/query/and/
+            'translate' => '$and:[{<param1>},{<param2>}]', // https://docs.mongodb.com/manual/reference/operator/query/and/
         ),
         'AND' => array( // https://dev.mysql.com/doc/refman/5.7/en/logical-operators.html#operator_and
             'nperands' => 2,
             'implemented' => true,
-            'translate' => '{$and:[{<param1>},{<param2>}]}', // https://docs.mongodb.com/manual/reference/operator/query/and/
+            'translate' => '$and:[{<param1>},{<param2>}]', // https://docs.mongodb.com/manual/reference/operator/query/and/
         ),
 //        'XOR' => array( // https://dev.mysql.com/doc/refman/5.7/en/logical-operators.html#operator_xor
 //            'nperands' => 0,
@@ -311,12 +311,12 @@ class SQLForMongodb {
         '||' => array( // https://dev.mysql.com/doc/refman/5.7/en/logical-operators.html#operator_or
             'nperands' => 2,
             'implemented' => true,
-            'translate' => '{$or:[{<param1>},{<param2>}}]}', // https://docs.mongodb.com/manual/reference/operator/query/or/
+            'translate' => '$or:[{<param1>},{<param2>}]', // https://docs.mongodb.com/manual/reference/operator/query/or/
         ),
         'OR' => array( // https://dev.mysql.com/doc/refman/5.7/en/logical-operators.html#operator_or
             'nperands' => 2,
             'implemented' => true,
-            'translate' => '{$or:[{<param1>},{<param2>}}]}', // https://docs.mongodb.com/manual/reference/operator/query/or/
+            'translate' => '$or:[{<param1>},{<param2>}]', // https://docs.mongodb.com/manual/reference/operator/query/or/
         ),
 //        ':=' => array(
 //            'nperands' => 0,
@@ -374,11 +374,14 @@ class SQLForMongodb {
 
         // Where
         $sWhere = '';
+        if (!isset($skeleton['WHERE'])) {
+            $skeleton['WHERE'] = array();
+        }
 //        var_dump($sql);
         $node = self::buildWhereTree($skeleton['WHERE']);
         $sWhere = '{}';
         if (count($node) > 0) {
-            $sWhere = self::parseWhere($node);
+            $sWhere = '{'.self::parseWhere($node).'}';
         }
         $params[] = $sWhere;
 
@@ -397,7 +400,7 @@ class SQLForMongodb {
         } else if ($params[0] == '{}') {
             unset($params[0]);
         }
-
+        
         $resp = "db.{$skeleton['FROM'][0]['table']}.find(".implode(',', $params).")";
         return $resp;
     }

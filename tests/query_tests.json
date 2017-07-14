@@ -1,11 +1,11 @@
 [
     {
         "sql":"SELECT * FROM people WHERE status = 'A' && (ff = 2 || true)",
-        "mongodb":"db.people.find({status:'A'})"
+        "mongodb":"db.people.find({$and:[{\"status\":'A'},{$or:[{\"ff\":2},{true}]}]})"
     },
     {
         "sql":"SELECT * FROM people WHERE status = 'A'",
-        "mongodb":"db.people.find({status:'A'})"
+        "mongodb":"db.people.find({\"status\":'A'})"
     },
     {
         "sql":"SELECT * FROM people",
