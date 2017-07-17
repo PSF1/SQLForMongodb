@@ -84,7 +84,6 @@ class SQLForMongodb {
      * mysql> SELECT (1+2)*3;
      * -> 9
      * 
-     * MongoDB online shell to test results: https://docs.mongodb.com/manual/tutorial/insert-documents/
      */
     protected static $Simb = array( //[4][3]
         array('INTERVAL', '', '', '', '', '', '', '', '', '', '', ''),
@@ -440,6 +439,7 @@ class SQLForMongodb {
             if($op["expr_type"] != 'operator') {
                 throw new \Exception('Spected operator but find \''.$op["expr_type"].'\' {'.$op["base_expr"].'}');
             }
+            $op["base_expr"] = strtoupper($op["base_expr"]);
             if (!self::$SimbParams[$op["base_expr"]]['implemented']) {
                 throw new \Exception('Operator not implemented {'.$op["base_expr"].'}');
             }
@@ -478,7 +478,14 @@ class SQLForMongodb {
                 } elseif($p2["expr_type"] == 'colref') {
                     $param1 = '"'.$p2['base_expr'].'"';
                 } else {
-                    $param2 = $p2['base_expr'];
+                    switch ($op["base_expr"]) {
+                        case 'LIKE':
+                            $param2 = self::parseLikePattern($p2['base_expr']);
+                            break;
+                        default:
+                            $param2 = $p2['base_expr'];
+                            break;
+                    }
                 }
             }
             // Do replacements
@@ -605,7 +612,7 @@ class SQLForMongodb {
 //        $val = False;
         for ($i = 0; $i < self::$SimbX; ++$i) {
             for ($j = 0; $j < self::$SimbY; ++$j) {
-                if ($Expr["base_expr"] == self::$Simb[$i][$j]) {
+                if (strtoupper($Expr["base_expr"]) == self::$Simb[$i][$j]) {
 //                    $val = True;
                     return true;
                 }
@@ -673,6 +680,7 @@ class SQLForMongodb {
             switch ($part) {
                 case $escape . $escape:
                     $expr .= preg_quote($escape, '/');
+                    $expr .= $escape;
                     break;
                 case $escape . '%':
                     $expr .= '%';
@@ -695,8 +703,8 @@ class SQLForMongodb {
             $lastWasPercent = $part == '%';
         }
         $expr .= '$/i';
-
-        return $expr;
+        
+        return str_replace('"', '', $expr);
     }
 
 }

@@ -1,5 +1,45 @@
 [
     {
+        "sql":"SELECT * FROM people WHERE status = \"A\" ORDER BY user_id ASC",
+        "mongodb":"db.people.find({\"status\":\"A\"}).sort({\"user_id\":1})"
+    },
+    {
+        "sql":"SELECT * FROM people WHERE user_id like \"%001\"",
+        "mongodb":"db.people.find({\"user_id\":{$regex:/^.*?001$/i}})"
+    },
+    {
+        "sql":"SELECT * FROM people WHERE user_id like \"bc%\"",
+        "mongodb":"db.people.find({\"user_id\":{$regex:/^bc.*?$/i}})"
+    },
+    {
+        "sql":"SELECT * FROM people WHERE user_id like \"%bc%\"",
+        "mongodb":"db.people.find({\"user_id\":{$regex:/^.*?bc.*?$/i}})"
+    },
+    {
+        "sql":"SELECT * FROM people WHERE age > 25 AND   age <= 50",
+        "mongodb":"db.people.find({$and:[{\"age\":{$gt:25}},{\"age\":{$lte:50}}]})"
+    },
+    {
+        "sql":"SELECT * FROM people WHERE age < 25",
+        "mongodb":"db.people.find({\"age\":{$lt:25}})"
+    },
+    {
+        "sql":"SELECT * FROM people WHERE age > 25",
+        "mongodb":"db.people.find({\"age\":{$gt:25}})"
+    },
+    {
+        "sql":"SELECT * FROM people WHERE status = \"A\" OR age = 50",
+        "mongodb":"db.people.find({$or:[{\"status\":\"A\"},{\"age\":50}]})"
+    },
+    {
+        "sql":"SELECT * FROM people WHERE status = \"A\" AND age = 50",
+        "mongodb":"db.people.find({$and:[{\"status\":\"A\"},{\"age\":50}]})"
+    },
+    {
+        "sql":"SELECT * FROM people WHERE status != \"A\"",
+        "mongodb":"db.people.find({\"status\":{$ne:\"A\"}})"
+    },
+    {
         "sql":"SELECT * FROM people WHERE status = 'A' && (ff = 2 || true)",
         "mongodb":"db.people.find({$and:[{\"status\":'A'},{$or:[{\"ff\":2},{true}]}]})"
     },

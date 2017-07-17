@@ -37,6 +37,7 @@
  * @license   http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
  * @version   SVN: $Id$
  * 
+ * MongoDB online shell to test results: https://docs.mongodb.com/manual/tutorial/insert-documents/
  */
 
 namespace pedropelaez;
@@ -79,6 +80,8 @@ class sqlForMongoTest extends \PHPUnit_Framework_TestCase {
     }
     
     /**
+     * @link https://docs.mongodb.com/manual/reference/sql-comparison/
+     * 
      * @covers pedropelaez\sqlForMongo::parse
      * @todo   Implement testParse().
      */
