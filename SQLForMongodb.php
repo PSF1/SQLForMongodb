@@ -410,11 +410,33 @@ class SQLForMongodb {
         // Fields
         $fields = array();
         $sFields = '';
+        $hasCount = false;
+        $cntCount = 0;
+        $counts = array();
+        $sCounts = '';
         foreach($skeleton['SELECT'] as $field) {
-            if ($field["base_expr"] == '*') {
-                continue;
+            switch ($field["expr_type"]) {
+                case 'aggregate_function':
+                    switch (strtoupper($field["base_expr"])) {
+                        case 'COUNT':
+                            $hasCount = true;
+                            foreach($field['sub_tree'] as $countField) {
+                                if ($countField["base_expr"] == '*') {
+                                    continue;
+                                }
+                                $counts[] = $countField["no_quotes"]["parts"][0].':{$exists:true}';
+                                ++$cntCount;
+                            }
+                            break;
+                    }
+                    break;
+                default:
+                    if ($field["base_expr"] == '*') {
+                        continue;
+                    }
+                    $fields[] = $field["no_quotes"]["parts"][0].':1';
+                    break;
             }
-            $fields[] = $field["no_quotes"]["parts"][0].':1';
         }
         if (count($fields) > 0) {
             $sFields = '{'.implode(',', $fields).'}';
@@ -424,6 +446,13 @@ class SQLForMongodb {
         }
         
         $resp = "db.{$skeleton['FROM'][0]['table']}.find(".implode(',', $params).")";
+        if ($hasCount) {
+            $resp .= '.count(';
+            if ($cntCount > 0) $resp .= '{';
+            $resp .= join(',', $counts);
+            if ($cntCount > 0) $resp .= '}';
+            $resp .= ')';
+        }
         if (count($sort) > 0) {
             $resp .= '.sort({'.join(',', $sort).'})';
         }

@@ -1,5 +1,17 @@
 [
     {
+        "sql":"SELECT COUNT(*) FROM people WHERE age > 30",
+        "mongodb":"db.people.find({\"age\":{$gt:30}}).count()"
+    },
+    {
+        "sql":"SELECT COUNT(user_id) FROM people",
+        "mongodb":"db.people.find().count({user_id:{$exists:true}})"
+    },
+    {
+        "sql":"SELECT COUNT(*) FROM people",
+        "mongodb":"db.people.find().count()"
+    },
+    {
         "sql":"SELECT * FROM people WHERE status = \"A\" ORDER BY user_id DESC",
         "mongodb":"db.people.find({\"status\":\"A\"}).sort({\"user_id\":-1})"
     },
