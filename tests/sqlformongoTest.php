@@ -86,7 +86,7 @@ class sqlForMongoTest extends \PHPUnit_Framework_TestCase {
      * @todo   Implement testParse().
      */
     public function testParseQuery() {
-        echo "\n";
+        echo "CURDIR => '".getcwd()."'\m";
         $tests = json_decode(file_get_contents('query_tests.json'));
         foreach($tests as $test) {
             $mongo = SQLForMongodb::parse($test->sql);
