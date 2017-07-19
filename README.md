@@ -1,4 +1,4 @@
-# SQL Fro MongoDB
+# SQL For MongoDB
 
 This library only convert MySQL queries to MongoDB languaje. It's the first step to get compatibility betwen tradicional PHP solutions with MongoDB without change de bissnes logic.
 
@@ -20,12 +20,13 @@ A second goal is the hability to build a Query API in cluster form, balancing lo
 * UNION
 * SHOW
 
-## SELECT's allowed operans:
+## SELECT's allowed operators:
 !, -, ^, *, /, DIV, %, MOD, -, +, =, <=>, >=, >, <=, <, <>, !=, LIKE, REGEXP, IN, NOT, &&, AND, ||, OR
 
-## SELECT's disalowed operans:
+## SELECT's disalowed operators:
 
 If you know a example of translation of this operators, please, open a new issue.
+
 INTERVAL, BINARY, COLLATE, ~, <<, >>, &, |, IS, BETWEEN, CASE, WHEN, THEN, ELSE, XOR, :=
 
 ## Before open a issue:
