@@ -414,10 +414,27 @@ class SQLForMongodb {
         $cntCount = 0;
         $counts = array();
         $sCounts = '';
+        $hasDistint = false;
+        $cntDistint = 0;
+        $distints = array();
+        $sDistints = '';
         foreach($skeleton['SELECT'] as $field) {
             switch ($field["expr_type"]) {
+                case 'reserved':
                 case 'aggregate_function':
                     switch (strtoupper($field["base_expr"])) {
+                        case 'DISTINCT':
+                            $hasDistint = true;
+                            if (isset($field['sub_tree']) && $field['sub_tree'] !== false) {
+                                foreach($field['sub_tree'] as $distintField) {
+                                    if ($distintField["base_expr"] == '*') {
+                                        continue;
+                                    }
+                                    $distints[] = '"'.$distintField["no_quotes"]["parts"][0].'"';
+                                    ++$cntDistint;
+                                }
+                            }
+                            break;
                         case 'COUNT':
                             $hasCount = true;
                             foreach($field['sub_tree'] as $countField) {
@@ -438,14 +455,34 @@ class SQLForMongodb {
                     break;
             }
         }
-        if (count($fields) > 0) {
-            $sFields = '{'.implode(',', $fields).'}';
-            $params[] = $sFields;
-        } else if ($params[0] == '{}') {
-            unset($params[0]);
+        if (!$hasDistint) {
+            if (count($fields) > 0) {
+                $sFields = '{'.implode(',', $fields).'}';
+                $params[] = $sFields;
+            } else if ($params[0] == '{}') {
+                unset($params[0]);
+            }
+        } else {
+            if (count($fields) > 0) {
+                $sFields = '"'.implode(',', $fields).'"';
+                $params[] = $sFields;
+            } else if ($params[0] == '{}') {
+                unset($params[0]);
+            }
         }
         
-        $resp = "db.{$skeleton['FROM'][0]['table']}.find(".implode(',', $params).")";
+        $resp = "";
+        if ($hasDistint) {
+            $resp .= "db.{$skeleton['FROM'][0]['table']}.distinct(";
+//            $resp .= join(',', $distints);
+            foreach($params as $pkey => $param) {
+                $params[$pkey] = str_replace(':1', '', $param);
+            }
+            $params = array_reverse($params);
+            $resp .= implode(',', $params).")";
+        } else {
+            $resp = "db.{$skeleton['FROM'][0]['table']}.find(".implode(',', $params).")";
+        }
         if ($hasCount) {
             $resp .= '.count(';
             if ($cntCount > 0) $resp .= '{';

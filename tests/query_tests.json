@@ -1,5 +1,9 @@
 [
     {
+        "sql":"SELECT DISTINCT status FROM people",
+        "mongodb":"db.people.distinct(\"status\",{})"
+    },
+    {
         "sql":"SELECT COUNT(*) FROM people WHERE age > 30",
         "mongodb":"db.people.find({\"age\":{$gt:30}}).count()"
     },
