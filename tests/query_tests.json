@@ -1,5 +1,9 @@
 [
     {
+        "sql":"EXPLAIN SELECT * FROM people WHERE status = \"A\"",
+        "mongodb":"db.people.find({\"status\":\"A\"}).explain()"
+    },
+    {
         "sql":"SELECT * FROM people LIMIT 10,5",
         "mongodb":"db.people.find().limit(5).skip(10)"
     },

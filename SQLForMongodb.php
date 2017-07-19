@@ -375,7 +375,10 @@ class SQLForMongodb {
         }
 
         $params = array();
-
+        
+        // Explain
+        $explain = array_key_exists('EXPLAIN', $skeleton);
+        
         // Where
         $sWhere = '';
         if (!isset($skeleton['WHERE'])) {
@@ -508,6 +511,9 @@ class SQLForMongodb {
             if (!empty($skip)) {
                 $resp .= '.skip('.$skip.')';
             }
+        }
+        if ($explain) {
+            $resp .= '.explain()';
         }
         return $resp;
     }
