@@ -1,5 +1,5 @@
 {
-    "name": "psf1/sqlformongo",
+    "name": "psf1/sqlformongodb",
     "description": "Translate SQL queries to MongoDB",
     "type": "library",
     "require": {
