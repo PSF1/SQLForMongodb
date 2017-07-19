@@ -1,5 +1,9 @@
 [
     {
+        "sql":"SELECT * FROM people WHERE status = \"A\" ORDER BY user_id DESC",
+        "mongodb":"db.people.find({\"status\":\"A\"}).sort({\"user_id\":-1})"
+    },
+    {
         "sql":"SELECT * FROM people WHERE status = \"A\" ORDER BY user_id ASC",
         "mongodb":"db.people.find({\"status\":\"A\"}).sort({\"user_id\":1})"
     },

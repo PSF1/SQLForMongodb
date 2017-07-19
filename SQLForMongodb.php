@@ -343,6 +343,11 @@ class SQLForMongodb {
         }
         $resp = '';
 //        var_dump($sql);
+        $xskeleton = array();
+        foreach($skeleton as $section => $params) {
+            $xskeleton[strtoupper($section)] = $params;
+        }
+        $skeleton = $xskeleton;
         foreach($skeleton as $section => $params) {
             switch ($section) {
                 case 'SELECT':
@@ -384,6 +389,24 @@ class SQLForMongodb {
         }
         $params[] = $sWhere;
 
+        // Order
+        $sort = array();
+        if (isset($skeleton['ORDER'])) {
+            foreach($skeleton['ORDER'] as $item) {
+                switch ($item["expr_type"]) {
+                    case 'colref':
+                        $order = '"'.$item['base_expr'].'":';
+                        if (strtoupper($item['direction']) == 'ASC') {
+                            $order .= '1';
+                        } else {
+                            $order .= '-1';
+                        }
+                        $sort[] = $order;
+                        break;
+                }
+            }
+        }
+        
         // Fields
         $fields = array();
         $sFields = '';
@@ -401,6 +424,9 @@ class SQLForMongodb {
         }
         
         $resp = "db.{$skeleton['FROM'][0]['table']}.find(".implode(',', $params).")";
+        if (count($sort) > 0) {
+            $resp .= '.sort({'.join(',', $sort).'})';
+        }
         return $resp;
     }
 
