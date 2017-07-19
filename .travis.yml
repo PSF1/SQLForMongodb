@@ -18,8 +18,8 @@ php:
   #- hhvm-3.18
   #- hhvm-nightly
 script: 
-    composer install
-    phpunit tests/sqlformongoTest.php
+    - composer install
+    - phpunit tests/sqlformongoTest.php
 # configure notifications (email, IRC, campfire etc)
 notifications:
   email: "aaaaa976@gmail.com"
