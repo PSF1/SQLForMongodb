@@ -5,16 +5,16 @@ group: edge
 php:
   - '5.6'
   - '7.0'
-  - '7.1'
-  - hhvm # on Trusty only
-  - nightly
-  - hhvm-3.3
-  - hhvm-3.6
-  - hhvm-3.9
-  - hhvm-3.12
-  - hhvm-3.15
-  - hhvm-3.18
-  - hhvm-nightly
+  # - '7.1'
+  # - hhvm # on Trusty only
+  # - nightly
+  # - hhvm-3.3
+  # - hhvm-3.6
+  # - hhvm-3.9
+  # - hhvm-3.12
+  # - hhvm-3.15
+  # - hhvm-3.18
+  # - hhvm-nightly
 script: 
     - composer install
     - phpunit tests/sqlformongoTest.php
