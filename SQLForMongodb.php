@@ -709,7 +709,7 @@ class SQLForMongodb {
      * IMPORTANT: Really don't remove the item, only change it to a empty string.
      * @param array $Text Items array
      */
-    private function buildWhereTreeRecExpPre($Text = null) {
+    private static function buildWhereTreeRecExpPre($Text = null) {
         if ($Text == null) $Text = array();
         $n = count($Text);
         $Text[$n - 1] = '';
@@ -722,7 +722,7 @@ class SQLForMongodb {
      * @param array $Expr Simbol array
      * @return boolean TRUE if $Expr represent a operator.
      */
-    private function buildWhereTreeIfSimb($Expr) {
+    private static function buildWhereTreeIfSimb($Expr) {
 //        $val = False;
         for ($i = 0; $i < self::$SimbX; ++$i) {
             for ($j = 0; $j < self::$SimbY; ++$j) {
@@ -746,7 +746,7 @@ class SQLForMongodb {
      * @param string $exp2 Operator 2
      * @return integer -1 if exp1 &lt; exp2, 0 if exp1 == exp2, 1 if exp1 > exp2
      */
-    private function buildWhereTreePriority($exp1, $exp2) {
+    private static function buildWhereTreePriority($exp1, $exp2) {
         //int i, j, p1, p2;
         $p1 = -1;
         $p2 = -1;
