@@ -1,5 +1,13 @@
 [
     {
+        "sql":"SELECT * FROM people LIMIT 10,5",
+        "mongodb":"db.people.find().limit(5).skip(10)"
+    },
+    {
+        "sql":"SELECT * FROM people LIMIT 1",
+        "mongodb":"db.people.find().limit(1)"
+    },
+    {
         "sql":"SELECT DISTINCT status FROM people",
         "mongodb":"db.people.distinct(\"status\",{})"
     },

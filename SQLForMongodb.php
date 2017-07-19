@@ -407,6 +407,16 @@ class SQLForMongodb {
             }
         }
         
+        // Limit
+        $limited = false;
+        $limit = 0;
+        $skip = 0;
+        if (isset($skeleton['LIMIT'])) {
+            $limited = true;
+            $limit = $skeleton['LIMIT']["rowcount"];
+            $skip = $skeleton['LIMIT']["offset"];
+        }
+        
         // Fields
         $fields = array();
         $sFields = '';
@@ -492,6 +502,12 @@ class SQLForMongodb {
         }
         if (count($sort) > 0) {
             $resp .= '.sort({'.join(',', $sort).'})';
+        }
+        if ($limited) {
+            $resp .= '.limit('.$limit.')';
+            if (!empty($skip)) {
+                $resp .= '.skip('.$skip.')';
+            }
         }
         return $resp;
     }
