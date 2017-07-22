@@ -1,0 +1,34 @@
+[
+    {
+        "sql":"SHOW SCHEMAS",
+        "mongodb":"show dbs"
+    },
+    {
+        "sql":"SHOW SCHEMAS LIKE '%name%'",
+        "mongodb":"UNTESTED"
+    },
+    {
+        "sql":"SHOW SCHEMAS LIKE 'name%'",
+        "mongodb":"UNTESTED"
+    },
+    {
+        "sql":"SHOW SCHEMAS LIKE '%name'",
+        "mongodb":"UNTESTED"
+    },
+    {
+        "sql":"SHOW SCHEMAS LIKE '%name%'",
+        "mongodb":"UNTESTED"
+    },
+    {
+        "sql":"SHOW DATABASES LIKE 'name%'",
+        "mongodb":"UNTESTED"
+    },
+    {
+        "sql":"SHOW DATABASES LIKE '%name'",
+        "mongodb":"UNTESTED"
+    },
+    {
+        "sql":"SHOW DATABASES",
+        "mongodb":"show dbs"
+    }
+]

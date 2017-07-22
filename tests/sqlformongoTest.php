@@ -96,5 +96,28 @@ class sqlForMongoTest extends \PHPUnit_Framework_TestCase {
             $this->assertEquals($test->mongodb, $mongo, 'Fail parsing "'.$test->sql.'"');
         }
     }
-
+    
+    /**
+     * @link https://docs.mongodb.com/manual/reference/sql-comparison/
+     * 
+     * @covers pedropelaez\sqlForMongo::parse
+     * @todo   Implement testParse().
+     */
+    public function testParseDAS() {
+        $tests = 'das_tests.json';
+        if (!is_file($tests)) {
+            $tests = 'tests/das_tests.json';
+        }
+        
+        // Stop here and mark this test as incomplete.
+        $this->markTestIncomplete(
+          'This test has not been implemented yet.'
+        );
+        
+        $tests = json_decode(file_get_contents($tests));
+        foreach($tests as $test) {
+            $mongo = SQLForMongodb::parse($test->sql);
+            $this->assertEquals($test->mongodb, $mongo, 'Fail parsing "'.$test->sql.'"');
+        }
+    }
 }

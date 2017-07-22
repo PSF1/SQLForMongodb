@@ -350,11 +350,15 @@ class SQLForMongodb {
         $skeleton = $xskeleton;
         foreach($skeleton as $section => $params) {
             switch ($section) {
+                case 'EXPLAIN':
                 case 'SELECT':
                     $resp = self::parseSelect($skeleton, $sql);
                     break;
-                case '':
-
+                case 'SHOW':
+                    $resp = self::parseShow($skeleton, $sql);
+                    break;
+                default:
+//                    throw new \Exception('Error parsing, unsupported statement {'.$section.'}');
                     break;
             }
         }
@@ -362,6 +366,28 @@ class SQLForMongodb {
         return $resp;
     }
 
+    /**
+     * Parse SHOW statement
+     * @param array $skeleton
+     * @param string $sql Original SQL for informational porpouses.
+     */
+    public static function parseShow($skeleton, &$sql) {
+        $resp = '';
+        foreach($skeleton['SHOW'] as $field) {
+            switch (strtoupper($field['base_expr'])) {
+                case 'DATABASES':
+                case 'SCHEMAS':
+                    //  TODO: Can MongoDB filter results? and change document structure?
+                    $resp = 'show dbs';
+                    break;
+                default:
+                    break;
+            }
+        }
+        
+        return $resp;
+    }
+    
     /**
      * Parse a query
      * @param array $skeleton
